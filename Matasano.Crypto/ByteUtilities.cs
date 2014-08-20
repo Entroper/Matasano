@@ -58,6 +58,18 @@ namespace Matasano.Crypto
 			return ret;
 		}
 
+		public static bool ContentsEqual(this byte[] lhs, byte[] rhs)
+		{
+			if (lhs.Length != rhs.Length)
+				return false;
+
+			for (int i = 0; i < lhs.Length; i++)
+				if (lhs[i] != rhs[i])
+					return false;
+
+			return true;
+		}
+
 		public static int HammingWeight(int b)
 		{
 			int weight = 0;

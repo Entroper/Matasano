@@ -17,7 +17,9 @@ namespace Matasano.Crypto.Set1
 			//Problem4();
 			//Problem5();
 			//Problem6Test();
-			Problem6();
+			//Problem6();
+			//Problem7();
+			Problem8();
 		}
 
 		private static void Problem1()
@@ -108,6 +110,40 @@ namespace Matasano.Crypto.Set1
 
 			Console.WriteLine("Key: {0}", key.ToText());
 			Console.WriteLine(cipherBytes.Xor(key).ToText());
+		}
+
+		private static void Problem7()
+		{
+			byte[] cipherBytes = ByteUtilities.Base64FileToBytes("7.txt");
+
+			var plainBytes = Crypto.Aes128EcbDecrypt(cipherBytes, "YELLOW SUBMARINE".ToBytes());
+			var unpadded = Crypto.RemovePkcs7Padding(plainBytes, 16);
+
+			Console.WriteLine(unpadded.ToText());
+		}
+
+		private static void Problem8()
+		{
+			using (var fs = new FileStream("8.txt", FileMode.Open, FileAccess.Read, FileShare.Read))
+			using (var sr = new StreamReader(fs))
+			{
+				string line;
+				while ((line = sr.ReadLine()) != null)
+				{
+					int matches = 0;
+
+					for (int i = 0; i < line.Length - 32; i += 32)
+						for (int j = i + 32; j < line.Length; j += 32)
+							if (line.Substring(i, 32) == line.Substring(j, 32))
+								matches++;
+
+					if (matches > 0)
+					{
+						Console.WriteLine("{0} matches", matches);
+						Console.WriteLine(line);
+					}
+				}
+			}
 		}
 	}
 }

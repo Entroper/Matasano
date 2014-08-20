@@ -40,6 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CharacterFrequency.cs" />
+    <Compile Include="Crypto.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ByteUtilities.cs" />
   </ItemGroup>
