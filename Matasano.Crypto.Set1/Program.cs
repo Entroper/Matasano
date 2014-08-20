@@ -15,7 +15,9 @@ namespace Matasano.Crypto.Set1
 			//Problem2();
 			//Problem3();
 			//Problem4();
-			Problem5();
+			//Problem5();
+			//Problem6Test();
+			Problem6();
 		}
 
 		private static void Problem1()
@@ -82,6 +84,30 @@ namespace Matasano.Crypto.Set1
 
 			string cipherText = plaintext.ToBytes().Xor(key).ToHex();
 			Console.WriteLine(cipherText);
+		}
+
+		private static void Problem6Test()
+		{
+			Console.WriteLine(ByteUtilities.HammingDistance("this is a test".ToBytes(), "wokka wokka!!!".ToBytes()));
+		}
+
+		private static void Problem6()
+		{
+			var cipherBytes = ByteUtilities.Base64FileToBytes("6.txt");
+			var blockSize = ByteUtilities.GetBlockSize(cipherBytes);
+
+			Console.WriteLine("Best block size: {0}", blockSize);
+
+			var transposedBlocks = ByteUtilities.GetTransposedBlocks(blockSize, cipherBytes);
+
+			byte[] key = new byte[blockSize];
+			for (int i = 0; i < blockSize; i++)
+			{
+				key[i] = CharacterFrequency.GetBestKey(transposedBlocks[i]);
+			}
+
+			Console.WriteLine("Key: {0}", key.ToText());
+			Console.WriteLine(cipherBytes.Xor(key).ToText());
 		}
 	}
 }

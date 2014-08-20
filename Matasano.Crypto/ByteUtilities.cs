@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -55,6 +56,73 @@ namespace Matasano.Crypto
 			}
 
 			return ret;
+		}
+
+		public static int HammingWeight(int b)
+		{
+			int weight = 0;
+			while (b > 0)
+			{
+				weight += b & 1;
+				b >>= 1;
+			}
+
+			return weight;
+		}
+
+		public static int HammingDistance(byte[] lhs, byte[] rhs)
+		{
+			if (lhs.Length != rhs.Length)
+				throw new InvalidOperationException("Hamming distance must be between byte arrays of the same length");
+
+			return lhs.Xor(rhs).Sum(b => HammingWeight(b));
+		}
+
+		public static int GetBlockSize(byte[] cipherBytes)
+		{
+			int bestBlockSize = 2;
+			int bestNormalizedHamming = int.MaxValue;
+			for (int blockSize = 2; blockSize <= 64; blockSize++)
+			{
+				byte[] lhs = new byte[blockSize*10];
+				byte[] rhs = new byte[blockSize*10];
+				Buffer.BlockCopy(cipherBytes, 0, lhs, 0, blockSize*10);
+				Buffer.BlockCopy(cipherBytes, blockSize*8, rhs, 0, blockSize*10);
+
+				int hamming = HammingDistance(lhs, rhs);
+				if (hamming/blockSize < bestNormalizedHamming)
+				{
+					bestNormalizedHamming = hamming/blockSize;
+					bestBlockSize = blockSize;
+				}
+			}
+			return bestBlockSize;
+		}
+
+		public static byte[][] GetTransposedBlocks(int bestBlockSize, byte[] cipherBytes)
+		{
+			byte[][] transposedBlocks = new byte[bestBlockSize][];
+			for (int i = 0; i < bestBlockSize; i++)
+			{
+				transposedBlocks[i] = new byte[cipherBytes.Length/bestBlockSize];
+				for (int j = 0; j < cipherBytes.Length/bestBlockSize; j++)
+				{
+					transposedBlocks[i][j] = cipherBytes[i + j*bestBlockSize];
+				}
+			}
+			return transposedBlocks;
+		}
+
+		public static byte[] Base64FileToBytes(string filename)
+		{
+			string contents;
+			using (var fs = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read))
+			using (var sr = new StreamReader(fs))
+			{
+				contents = sr.ReadToEnd();
+			}
+
+			return contents.Replace("\n", "").ToBytesFromBase64();
 		}
 	}
 }
