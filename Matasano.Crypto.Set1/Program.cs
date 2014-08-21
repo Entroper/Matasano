@@ -130,12 +130,7 @@ namespace Matasano.Crypto.Set1
 				string line;
 				while ((line = sr.ReadLine()) != null)
 				{
-					int matches = 0;
-
-					for (int i = 0; i < line.Length - 32; i += 32)
-						for (int j = i + 32; j < line.Length; j += 32)
-							if (line.Substring(i, 32) == line.Substring(j, 32))
-								matches++;
+					int matches = ByteUtilities.CountMatchingBlocks(line.ToBytesFromHex(), 16);
 
 					if (matches > 0)
 					{

@@ -58,13 +58,25 @@ namespace Matasano.Crypto
 			return ret;
 		}
 
-		public static bool ContentsEqual(this byte[] lhs, byte[] rhs)
+		public static int CountMatchingBlocks(byte[] data, int blockSize)
 		{
-			if (lhs.Length != rhs.Length)
-				return false;
+			int matches = 0;
 
-			for (int i = 0; i < lhs.Length; i++)
-				if (lhs[i] != rhs[i])
+			for (int i = 0; i < data.Length - blockSize; i += blockSize)
+				for (int j = i + blockSize; j < data.Length; j += blockSize)
+					if (BlockMatches(data, i, data, j, blockSize))
+						matches++;
+
+			return matches;
+		}
+
+		public static bool BlockMatches(byte[] lhs, int leftOffset, byte[] rhs, int rightOffset, int blockSize)
+		{
+			if (leftOffset + blockSize > lhs.Length || rightOffset + blockSize > rhs.Length)
+				throw new InvalidOperationException("Incomplete block");
+
+			for (int i = 0; i < blockSize; i++)
+				if (lhs[leftOffset + i] != rhs[rightOffset + i])
 					return false;
 
 			return true;
