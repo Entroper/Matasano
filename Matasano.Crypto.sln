@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Matasano.Crypto", "Matasano
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Matasano.Crypto.Set1", "Matasano.Crypto.Set1\Matasano.Crypto.Set1.csproj", "{4678CC41-BBEB-4B55-A0F1-C273BF1B8199}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Matasano.Crypto.Set2", "Matasano.Crypto.Set2\Matasano.Crypto.Set2.csproj", "{93009235-4050-46DA-86FD-85B4FCEFB314}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,6 +21,10 @@ Global
 		{4678CC41-BBEB-4B55-A0F1-C273BF1B8199}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4678CC41-BBEB-4B55-A0F1-C273BF1B8199}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4678CC41-BBEB-4B55-A0F1-C273BF1B8199}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93009235-4050-46DA-86FD-85B4FCEFB314}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93009235-4050-46DA-86FD-85B4FCEFB314}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93009235-4050-46DA-86FD-85B4FCEFB314}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93009235-4050-46DA-86FD-85B4FCEFB314}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
