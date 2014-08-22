@@ -14,7 +14,7 @@ namespace Matasano.Crypto
 		{
 			byte bestKey = 0;
 			int bestScore = int.MaxValue;
-			foreach (byte b in Enumerable.Range(0, 255))
+			foreach (byte b in Enumerable.Range(0, 256))
 			{
 				var plainBytes = cipherBytes.Xor(new[] { b });
 				var plainText = plainBytes.ToText();

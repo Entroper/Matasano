@@ -16,7 +16,8 @@ namespace Matasano.Crypto.Set2
 		{
 			//Problem9();
 			//Problem10();
-			Problem11();
+			//Problem11();
+			Problem12();
 		}
 
 		public static void Problem9()
@@ -47,6 +48,30 @@ namespace Matasano.Crypto.Set2
 
 				Console.WriteLine("Detected: {0} | Actual: {1}", matchingBlocks > 0 ? CipherMode.ECB : CipherMode.CBC, mode);
 			}
+		}
+
+		public static void Problem12()
+		{
+			byte[] message = "Um9sbGluJyBpbiBteSA1LjAKV2l0aCBteSByYWctdG9wIGRvd24gc28gbXkgaGFpciBjYW4gYmxvdwpUaGUgZ2lybGllcyBvbiBzdGFuZGJ5IHdhdmluZyBqdXN0IHRvIHNheSBoaQpEaWQgeW91IHN0b3A/IE5vLCBJIGp1c3QgZHJvdmUgYnkK"
+				.ToBytesFromBase64();
+
+			byte[] key = new byte[16];
+			_byteGenerator.GetBytes(key);
+
+			byte[] prefix = "AAAAAAAAAAAAAAA".ToBytes();
+			byte[] decodedMessage = new byte[message.Length];
+			for (int i = 0; i < message.Length; i++)
+			{
+				var dictionary = Crypto.BuildAes128EcbDictionary(prefix, key);
+
+				byte[] plainBytes = prefix.Concat(new[] { message[i] }).ToArray();
+				byte[] cipherBytes = Crypto.Aes128EcbEncrypt(plainBytes, key);
+
+				decodedMessage[i] = dictionary[cipherBytes];
+				Buffer.BlockCopy(plainBytes, 1, prefix, 0, prefix.Length);
+			}
+
+			Console.WriteLine(decodedMessage.ToText());
 		}
 
 		private static byte[] P11Encrypt(byte[] plainBytes, out CipherMode mode)

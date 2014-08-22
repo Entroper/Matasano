@@ -101,23 +101,74 @@ namespace Matasano.Crypto
 
 		public static byte[] RemovePkcs7Padding(byte[] padded, int blockSize)
 		{
-			if (padded.Length % blockSize != 0)
-				throw new InvalidOperationException("Input array length is not a multiple of blockSize");
-
-			byte padding = padded[padded.Length - 1];
-			if (padding < 1 || padding > blockSize)
+			if (!IsPkcs7Padded(padded, blockSize))
 				throw new InvalidOperationException("Input array is not PKCS#7 padded");
 
-			for (int i = 1; i <= padding; i++)
-			{
-				if (padded[padded.Length - i] != padding)
-					throw new InvalidOperationException("Input array is not PKCS#7 padded");
-			}
-
+			byte padding = padded[padded.Length - 1];
 			byte[] unpadded = new byte[padded.Length - padding];
 			Buffer.BlockCopy(padded, 0, unpadded, 0, unpadded.Length);
 
 			return unpadded;
+		}
+
+		public static bool IsPkcs7Padded(byte[] padded, int blockSize)
+		{
+			if (padded.Length%blockSize != 0)
+				return false;
+
+			byte padding = padded[padded.Length - 1];
+			if (padding < 1 || padding > blockSize)
+				return false;
+
+			for (int i = 1; i <= padding; i++)
+			{
+				if (padded[padded.Length - i] != padding)
+					return false;
+			}
+
+			return true;
+		}
+
+		public static Dictionary<byte[], byte> BuildAes128EcbDictionary(byte[] prefix, byte[] key)
+		{
+			var dictionary = new Dictionary<byte[], byte>(new ByteArrayEqualityComparer());
+			foreach (byte b in Enumerable.Range(0, 256))
+			{
+				byte[] plainBytes = new byte[16];
+				Buffer.BlockCopy(prefix, 0, plainBytes, 0, 15);
+				plainBytes[15] = b;
+
+				byte[] cipherBytes = Aes128EcbEncrypt(plainBytes, key);
+				dictionary.Add(cipherBytes, b);
+			}
+
+			return dictionary;
+		}
+	}
+
+	public class ByteArrayEqualityComparer : IEqualityComparer<byte[]>
+	{
+		public bool Equals(byte[] x, byte[] y)
+		{
+			if (x == null || y == null)
+				return x == y;
+
+			if (x.Length != y.Length)
+				return false;
+
+			return ByteUtilities.BlockMatches(x, 0, y, 0, x.Length);
+		}
+
+		public int GetHashCode(byte[] obj)
+		{
+			int hash = 0;
+			foreach (byte b in obj)
+			{
+				hash *= 31;
+				hash ^= b;
+			}
+
+			return hash;
 		}
 	}
 }
